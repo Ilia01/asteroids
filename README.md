@@ -61,6 +61,7 @@ This project is actively under development. The core gameplay mechanics are impl
 ## 🛠️ Technical Stack
 
 - **Python 3.13+**: Modern Python features and performance
+- **uv**: Fast Python package manager and project runner
 - **Pygame 2.6.1**: Game development framework
 - **Object-Oriented Design**: Clean, maintainable code architecture
 - **Vector Mathematics**: Efficient 2D physics and collision detection
@@ -75,19 +76,20 @@ This project is actively under development. The core gameplay mechanics are impl
 
 ### Prerequisites
 - Python 3.13 or higher
-- Pygame 2.6.1
+- [uv](https://docs.astral.sh/uv/) package manager
+- Pygame 2.6.1 (managed by uv)
 
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/Ilia01/asteroids.git
 cd asteroids
 
-# Install dependencies
-pip install pygame==2.6.1
+# Install dependencies with uv
+uv sync
 
-# Run the game
-python game/main.py
+# Run the game with uv
+uv run game/main.py
 ```
 
 ## 📁 Project Structure
