@@ -5,7 +5,7 @@ from components.asteroidfield import AsteroidField
 from components.shot import Shot
 from components.player import Player
 from core.constants import SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_LIVES, RESPAWN_TIMER
-from util.text_classes import ScoreText, LiveText
+from util.text_classes import ScoreText, LiveText, DynamicText, RespawnText
 
 
 class GameplayState(BaseState):
@@ -28,14 +28,17 @@ class GameplayState(BaseState):
         self.score = 0
         self.score_display = None
 
-        self.player_lives = PLAYER_LIVES
+        self.player_lives = 0
         self.player_lives_display = None
 
         self.is_respawning = False
         self.respawn_timer = 0
+        self.respawn_surface = None
+        self.respawn_text_display = None
 
     def startup(self, **kwargs):
         self.score = 0
+        self.player_lives = PLAYER_LIVES
 
         self.score_display = ScoreText(
             self.font, (255, 255, 255), (SCREEN_WIDTH / 1.2, 30)
@@ -46,6 +49,10 @@ class GameplayState(BaseState):
             (SCREEN_WIDTH / 5, 30),
         )
 
+        self.respawn_text_display = RespawnText(
+            self.font, "white", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        )
+
         self.updatable.empty()
         self.drawable.empty()
         self.asteroids.empty()
@@ -53,6 +60,11 @@ class GameplayState(BaseState):
 
         self.asteroid_field = AsteroidField()
         self.player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
+        self.respawn_surface = pygame.surface.Surface(
+            flags=pygame.SRCALPHA,
+            size=(SCREEN_WIDTH, SCREEN_HEIGHT),
+        )
 
     def handle_events(self, events):
         pass
@@ -62,6 +74,9 @@ class GameplayState(BaseState):
 
         if self.is_respawning:
             self.respawn_timer -= dt
+            self.respawn_text_display.set_text(
+                f"Respawning in {self.respawn_timer:0.2f}"
+            )
             if self.respawn_timer <= 0:
                 if self.player_lives > 0:
                     self.player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -103,3 +118,10 @@ class GameplayState(BaseState):
 
         self.score_display.draw(screen)
         self.player_lives_display.draw(screen)
+
+        if self.is_respawning:
+            self.respawn_surface.fill(color=(0, 0, 0, 150))
+
+            screen.blit(self.respawn_surface, (0, 0))
+
+            self.respawn_text_display.draw(self.screen)
